@@ -35,8 +35,7 @@ setup(name='repoze.vhm',
       test_suite = "repoze.vhm.tests",
       entry_points="""
       [paste.filter_app_factory]
-      vhm_z2 = repoze.vhm:make_vhm_z2
-      vhm_z3 = repoze.vhm:make_vhm_z3
+      vhm_zope2 = repoze.vhm.zope2:make_filter
+      vhm_xheaders = repoze.vhm.xheaders:make_filter
       """,
       )
-

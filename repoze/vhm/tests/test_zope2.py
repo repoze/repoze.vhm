@@ -2,8 +2,8 @@ import unittest
 
 class TestVHM2(unittest.TestCase):
     def _getTargetClass(self):
-        from repoze.vhm.zope2 import VHM
-        return VHM
+        from repoze.vhm.zope2 import VHMFilter
+        return VHMFilter
 
     def _makeOne(self, app):
         return self._getTargetClass()(app)

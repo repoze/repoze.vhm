@@ -1,17 +1,9 @@
 - Figure out how to call 'request.serVirtualRoot' in the "stock CGI
   environment" case.
 
-  o Look at Ian Bicking's "proposale for using headers / environnment",
-    http://blog.ianbicking.org/2007/08/10/defaults-inheritance/ for ideas
-    on how other Python web frameworks do virtual hosting inside / behind
-    Apache.
-
 - Add the various Limi-placating environment variables to the environment
   ('ACTUAL_URL', 'VIRTUAL_URL', etc.) inside 'setServerURL'.
 
 - Implement Z3 filter.
 
 - Implement any application-level analog in Z3 for 'setServerURL'.
-
-- Use 'wsgi.url_scheme' provided by WSGI server (as required in
-  "PEP 333": http://www.python.org/dev/peps/pep-0333/ ).

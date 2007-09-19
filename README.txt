@@ -67,6 +67,40 @@ repoze.vhm README
 
     TODO:  show the example using Z3's syntax.
 
+  Proxy Headers Virtual Hosting Model
+
+    This model, based on a "suggestion of Ian Bicking's",
+    http://blog.ianbicking.org/2007/08/10/defaults-inheritance/ ,
+    passes virtual hosting information from the proxy / web server to
+    the application by adding extra headers to the proxied request:
+
+     'HTTP_X_VHM_HOST' -- indicates the apparent URL prevfix of the
+        root of the application (concatenating 'wsgi.url_scheme',
+        'SERVER_NAME', 'SERVER_PORT', and 'SCRIPT_NAME' variables;
+        the equivalent of Zope2's 'SERVER_URL').
+
+     'HTTP_X_VHM_ROOT' -- path of the object within the application
+        which is supposed to function as the "virtual root".
+
+    When serving an application from "within" Apache, we can just set
+    the environment directly::
+
+      <Directory /path/to/wsgiapp>
+       SetEnv HTTP_X_VHM_HOST http://www.example.com/
+       SetEnv HTTP_X_VHM_ROOT /cms
+      </Directory>
+
+    Proxies pass this information by adding additional headers.  E.g.,
+    a sample Apache configuration for the example above might be::
+
+      <VirtualHost *:80>
+        ServerName www.example.com
+        RewriteEngine on
+        RewriteRule ^/(.*) http://localhost:8080/$1
+        Header add X-VHm-Host http://www.example.com/
+        Header add X-VHm-Root /cms
+      </VirtualHost>
+
   'repoze.vhm' WSGI Filters
 
     This package provides two filters for use in the "behind" (proxied)

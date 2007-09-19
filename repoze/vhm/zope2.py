@@ -1,6 +1,8 @@
 from urlparse import urlunsplit
 
-class VHM:
+from repoze.vhm.constants import DEFAULT_PORTS
+
+class VHMFilter:
     """ WSGI ingress filter:
 
     o Converts Zope2 VirtualHostMonster-style URL tokens into "stock" CGI
@@ -64,10 +66,6 @@ class VHM:
 
         return self.application(environ, start_response)
 
-_DEFAULT_PORTS = {'http': '80',
-                  'https': '443',
-                 }
-
 def setServerURL(environ):
     """ Compute Zope2 'SERVER_URL' using WSGI environment.
 
@@ -81,7 +79,7 @@ def setServerURL(environ):
     port = environ.get('SERVER_PORT', '8080')
     script_name = environ.get('SCRIPT_NAME', '/')
 
-    if port is not None and port != _DEFAULT_PORTS.get(scheme):
+    if port is not None and port != DEFAULT_PORTS.get(scheme):
         netloc = '%s:%s' % (host, port)
     else:
         netloc = host
@@ -89,5 +87,5 @@ def setServerURL(environ):
     url = urlunsplit((scheme, netloc, script_name, '', ''))
     environ['SERVER_URL'] = url
  
-def make_vhm(app, global_conf):
-    return VHM(app)
+def make_filter(app, global_conf):
+    return VHMFilter(app)
