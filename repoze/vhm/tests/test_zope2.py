@@ -14,7 +14,8 @@ class TestVHM2(unittest.TestCase):
         app = VHMTestApp(expected)
         filter = self._makeOne(app)
         REAL_PATH = '/a/b/c/'
-        environ = {'SERVER_NAME': 'example.com',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
                    'SERVER_PORT': '8888',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': REAL_PATH,
@@ -22,7 +23,7 @@ class TestVHM2(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected.get('repoze.vhm.url_scheme'), None)
+        self.assertEqual(expected.get('wsgi.url_scheme'), 'http')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '8888')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -36,7 +37,8 @@ class TestVHM2(unittest.TestCase):
         filter = self._makeOne(app)
         PREFIX = '/VirtualHostBase/http/example.com:80'
         REAL_PATH = '/a/b/c/'
-        environ = {'SERVER_NAME': 'localhost',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
                    'SERVER_PORT': '8080',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': PREFIX + REAL_PATH,
@@ -44,7 +46,7 @@ class TestVHM2(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected['repoze.vhm.url_scheme'], 'http')
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -57,7 +59,8 @@ class TestVHM2(unittest.TestCase):
         filter = self._makeOne(app)
         PREFIX = '/VirtualHostBase/http/example.com:8000'
         REAL_PATH = '/a/b/c/'
-        environ = {'SERVER_NAME': 'localhost',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
                    'SERVER_PORT': '8080',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': PREFIX + REAL_PATH,
@@ -77,7 +80,8 @@ class TestVHM2(unittest.TestCase):
         filter = self._makeOne(app)
         REAL_PATH = '/a/b/c/'
         PREFIX = '/VirtualHostBase/https/example.com:443/VirtualHostRoot'
-        environ = {'SERVER_NAME': 'localhost',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
                    'SERVER_PORT': '8080',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': PREFIX + REAL_PATH,
@@ -85,7 +89,7 @@ class TestVHM2(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected['repoze.vhm.url_scheme'], 'https')
+        self.assertEqual(expected['wsgi.url_scheme'], 'https')
         self.assertEqual(expected['repoze.vhm.virtual_root'], '/')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '443')
@@ -99,7 +103,8 @@ class TestVHM2(unittest.TestCase):
         filter = self._makeOne(app)
         REAL_PATH = '/a/b/c/'
         PREFIX = '/VirtualHostBase/http/example.com:80/sub1/VirtualHostRoot'
-        environ = {'SERVER_NAME': 'localhost',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
                    'SERVER_PORT': '8080',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': PREFIX + REAL_PATH,
@@ -107,7 +112,7 @@ class TestVHM2(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected['repoze.vhm.url_scheme'], 'http')
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
         self.assertEqual(expected['repoze.vhm.virtual_root'], '/sub1')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
@@ -122,7 +127,8 @@ class TestVHM2(unittest.TestCase):
         REAL_PATH = '/a/b/c/'
         PREFIX = ('/VirtualHostBase/http/example.com:80/VirtualHostRoot'
                   '/_vh_sub1/_vh_sub2')
-        environ = {'SERVER_NAME': 'localhost',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
                    'SERVER_PORT': '8080',
                    'SCRIPT_NAME': '/script',
                    'PATH_INFO': PREFIX + REAL_PATH,
@@ -130,7 +136,7 @@ class TestVHM2(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected['repoze.vhm.url_scheme'], 'http')
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
@@ -152,7 +158,8 @@ class Test_setServerURL(unittest.TestCase):
 
     def test_without_url_scheme(self):
         setServerURL = self._getFUT()
-        environ = {'SERVER_NAME': 'example.com',
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
                    'SERVER_PORT': '8000',
                    'SCRIPT_NAME': '/script',
                   }
@@ -163,7 +170,7 @@ class Test_setServerURL(unittest.TestCase):
 
     def test_with_default_port(self):
         setServerURL = self._getFUT()
-        environ = {'repoze.vhm.url_scheme': 'http',
+        environ = {'wsgi.url_scheme': 'http',
                    'SERVER_NAME': 'example.com',
                    'SERVER_PORT': '80',
                    'SCRIPT_NAME': '/script',
@@ -175,7 +182,7 @@ class Test_setServerURL(unittest.TestCase):
 
     def test_with_alternate_port(self):
         setServerURL = self._getFUT()
-        environ = {'repoze.vhm.url_scheme': 'https',
+        environ = {'wsgi.url_scheme': 'https',
                    'SERVER_NAME': 'example.com',
                    'SERVER_PORT': '4433',
                    'SCRIPT_NAME': '/script',
@@ -186,6 +193,7 @@ class Test_setServerURL(unittest.TestCase):
                          'https://example.com:4433/script')
 
     def test_https_without_url_scheme_with_default_port(self):
+        # In case of a PEP 333 violation.
         setServerURL = self._getFUT()
         environ = {'HTTPS': 'on',
                    'SERVER_NAME': 'example.com',

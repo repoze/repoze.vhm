@@ -28,7 +28,7 @@ class VHM:
             if token == 'VirtualHostBase':
 
                 scheme = elements.pop(0)
-                environ['repoze.vhm.url_scheme'] = scheme
+                environ['wsgi.url_scheme'] = scheme
 
                 host = elements.pop(0)
                 if ':' in host:
@@ -73,7 +73,7 @@ def setServerURL(environ):
 
     o Write the key into the environment.
     """
-    scheme = environ.get('repoze.vhm.url_scheme')
+    scheme = environ.get('wsgi.url_scheme')
     if scheme is None:
         scheme = 'HTTPS' in environ and 'https' or 'http'
 
