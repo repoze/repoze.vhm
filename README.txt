@@ -7,6 +7,9 @@ repoze.vhm README
     "VirtualHostMonster":http://www.zope.org/Members/4am/SiteAccess2/info
     won't work.
 
+    It also provides CGI-environment-munging middleware that is
+    potentially useful within a non-Zope WSGI application.
+
   Virtual Hosting in a Nutshell
 
     "Virtual hosting" enables dynamic applications to be served from within
@@ -29,7 +32,7 @@ repoze.vhm README
     'mod_python'), there follwing environment variables are of interest
     when doing virtual hosting:
 
-      'SERVER_HAME' -- the apparent hostname of the server (i.e., as
+      'SERVER_NAME' -- the apparent hostname of the server (i.e., as
         passed in the 'Host:' header)
 
       'SERVER_PORT' -- the apparent port of the server
@@ -74,7 +77,7 @@ repoze.vhm README
     passes virtual hosting information from the proxy / web server to
     the application by adding extra headers to the proxied request:
 
-     'HTTP_X_VHM_HOST' -- indicates the apparent URL prevfix of the
+     'HTTP_X_VHM_HOST' -- indicates the apparent URL prefix of the
         root of the application (concatenating 'wsgi.url_scheme',
         'SERVER_NAME', 'SERVER_PORT', and 'SCRIPT_NAME' variables;
         the equivalent of Zope2's 'SERVER_URL').
