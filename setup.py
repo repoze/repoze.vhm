@@ -1,14 +1,17 @@
-__version__ = '0.1'
+__version__ = '0.2'
 
 import os
 from setuptools import setup, find_packages
 
+here = os.path.abspath(os.path.dirname(__file__))
+README = open(os.path.join(here, 'README.txt')).read()
+
 setup(name='repoze.vhm',
       version=__version__,
       description='repoze virtual hosting middleware.',
-      long_description='',
+      long_description=README,
       classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Topic :: Internet :: WWW/HTTP",
@@ -28,8 +31,6 @@ setup(name='repoze.vhm',
       include_package_data=True,
       namespace_packages=['repoze'],
       zip_safe=False,
-      install_requires=['zopelib >= 2.10.4.2',
-                       ],
       test_suite = "repoze.vhm.tests",
       entry_points="""
       [paste.filter_app_factory]

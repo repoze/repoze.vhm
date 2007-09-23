@@ -1,3 +1,8 @@
+0.2
+
+  Change repoze.vhm.zope2:setServerURL to allow Zope 2 to generate the
+  correct request['URL'] value when the vhm is in the pipeline.
+
 0.1
 
   Initial release.

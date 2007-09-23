@@ -154,7 +154,7 @@ class Test_setServerURL(unittest.TestCase):
         setServerURL(environ)
 
         self.assertEqual(environ,
-                         {'SERVER_URL': 'http://localhost:8080/'})
+                         {'SERVER_URL': 'http://localhost:8080'})
 
     def test_without_url_scheme(self):
         setServerURL = self._getFUT()
@@ -166,7 +166,7 @@ class Test_setServerURL(unittest.TestCase):
         setServerURL(environ)
 
         self.assertEqual(environ['SERVER_URL'],
-                         'http://example.com:8000/script')
+                         'http://example.com:8000')
 
     def test_with_default_port(self):
         setServerURL = self._getFUT()
@@ -178,7 +178,7 @@ class Test_setServerURL(unittest.TestCase):
         setServerURL(environ)
 
         self.assertEqual(environ['SERVER_URL'],
-                         'http://example.com/script')
+                         'http://example.com')
 
     def test_with_alternate_port(self):
         setServerURL = self._getFUT()
@@ -190,7 +190,7 @@ class Test_setServerURL(unittest.TestCase):
         setServerURL(environ)
 
         self.assertEqual(environ['SERVER_URL'],
-                         'https://example.com:4433/script')
+                         'https://example.com:4433')
 
     def test_https_without_url_scheme_with_default_port(self):
         # In case of a PEP 333 violation.
@@ -203,7 +203,7 @@ class Test_setServerURL(unittest.TestCase):
         setServerURL(environ)
 
         self.assertEqual(environ['SERVER_URL'],
-                         'https://example.com/script')
+                         'https://example.com')
 
 def noopStartResponse(status, headers):
     pass
