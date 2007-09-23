@@ -84,7 +84,7 @@ def setServerURL(environ):
     else:
         netloc = host
 
-    url = urlunsplit((scheme, netloc, script_name, '', ''))
+    url = urlunsplit((scheme, netloc, '', '', ''))
     environ['SERVER_URL'] = url
  
 def make_filter(app, global_conf):
