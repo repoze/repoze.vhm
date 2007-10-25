@@ -1,3 +1,8 @@
+0.3
+
+  Fix setServerURL method to take into account HTTP_HOST passed by
+  client.
+
 0.2
 
   Change repoze.vhm.zope2:setServerURL to allow Zope 2 to generate the

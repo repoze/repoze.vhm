@@ -75,8 +75,17 @@ def setServerURL(environ):
     if scheme is None:
         scheme = 'HTTPS' in environ and 'https' or 'http'
 
-    host = environ.get('SERVER_NAME', 'localhost')
-    port = environ.get('SERVER_PORT', '8080')
+    http_host = environ.get('HTTP_HOST')
+    if http_host:
+        if ':' in http_host:
+            host, port = http_host.split(':', 1)
+        else:
+            host = http_host
+            port = None
+    else:
+        host = environ.get('SERVER_NAME', 'localhost')
+        port = environ.get('SERVER_PORT', '8080')
+
     script_name = environ.get('SCRIPT_NAME', '/')
 
     if port is not None and port != DEFAULT_PORTS.get(scheme):

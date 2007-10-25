@@ -205,6 +205,36 @@ class Test_setServerURL(unittest.TestCase):
         self.assertEqual(environ['SERVER_URL'],
                          'https://example.com')
 
+    def test_with_http_host_has_port(self):
+        setServerURL = self._getFUT()
+        environ = {'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8081',
+                   'SCRIPT_NAME': '/script',
+                   'HTTP_HOST':'localhost:8080',
+                  }
+        setServerURL(environ)
+        self.assertEqual(environ['SERVER_URL'], 'http://localhost:8080')
+        
+    def test_with_http_host_has_default_port(self):
+        setServerURL = self._getFUT()
+        environ = {'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '80',
+                   'SCRIPT_NAME': '/script',
+                   'HTTP_HOST':'localhost:80',
+                  }
+        setServerURL(environ)
+        self.assertEqual(environ['SERVER_URL'], 'http://localhost')
+
+    def test_with_http_host_no_port(self):
+        setServerURL = self._getFUT()
+        environ = {'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8081',
+                   'SCRIPT_NAME': '/script',
+                   'HTTP_HOST':'localhost',
+                  }
+        setServerURL(environ)
+        self.assertEqual(environ['SERVER_URL'], 'http://localhost')
+
 def noopStartResponse(status, headers):
     pass
 
