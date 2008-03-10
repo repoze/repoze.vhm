@@ -1,8 +1,22 @@
+##############################################################################
+#
+# Copyright (c) 2008 Agendaless Consulting and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the BSD-like license at
+# http://www.repoze.org/LICENSE.txt.  A copy of the license should accompany
+# this distribution.  THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL
+# EXPRESS OR IMPLIED WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND
+# FITNESS FOR A PARTICULAR PURPOSE
+#
+##############################################################################
+
 import unittest
 
 class TestXHeaders(unittest.TestCase):
     def _getTargetClass(self):
-        from repoze.vhm.xheaders import VHMFilter
+        from repoze.vhm.middleware import VHMFilter
         return VHMFilter
 
     def _makeOne(self, app):
@@ -29,6 +43,7 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SCRIPT_NAME'], '/')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
+        self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
 
     def test___call___X_VHM_HOST_only_explicit_port(self):
         expected = {}
@@ -51,6 +66,8 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
+        self.assertEqual(expected['repoze.vhm.virtual_host_base'],
+                         'example.com:80')
 
     def test___call___X_VHM_HOST_only_default_port(self):
         expected = {}
@@ -74,6 +91,8 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
+        self.assertEqual(expected['repoze.vhm.virtual_host_base'],
+                         'example.com:80')
 
     def test___call___X_VHM_ROOT(self):
         expected = {}

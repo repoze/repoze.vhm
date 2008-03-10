@@ -1,3 +1,15 @@
+0.4 (2008-03-09)
+
+  Kill off path-segment-based filter (repoze.vhm.zope2).  Only the
+  xheaders filter remains.
+
+  Add license headers.
+
+  The middleware now sets a 'repoze.vhm.virtual_host_base' which is
+  preferred by setServerUrl over 'HTTP_HOST' when present.
+
+  Add a getVirtualRoot API.
+
 0.3
 
   Fix setServerURL method to take into account HTTP_HOST passed by

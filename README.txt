@@ -2,13 +2,12 @@ repoze.vhm README
 
   Overview
 
-    This package provides some glue for doing Zope2-style virtual hosting
-    within the 'repoze.zope2' environment, where the classic Zope2
+    This package provides middleware and utilities for doing virtual
+    hosting within a WSGI/Repoze environment.  It is particularly
+    useful within a 'repoze.zope2' environment, where it may be used
+    as an alternative to the classic
     "VirtualHostMonster":http://www.zope.org/Members/4am/SiteAccess2/info
-    won't work.
-
-    It also provides CGI-environment-munging middleware that is
-    potentially useful within a non-Zope WSGI application.
+    method of doing virtual hosting.
 
   Virtual Hosting in a Nutshell
 
@@ -32,7 +31,9 @@ repoze.vhm README
     'mod_python'), there follwing environment variables are of interest
     when doing virtual hosting:
 
-      'SERVER_NAME' -- the apparent hostname of the server (i.e., as
+      'SERVER_NAME' -- the name which the server believes it has.
+
+      'HTTP_HOST' -- the apparent hostname of the server (i.e., as
         passed in the 'Host:' header)
 
       'SERVER_PORT' -- the apparent port of the server
@@ -43,37 +44,29 @@ repoze.vhm README
       'PATH_INFO' -- the remainder of the path, after removing any parts
         used in dispatch.
 
-  Zope2 Virtual Hosting Model
+  'repoze.vhm#xheaders' WSGI Filter
 
-    In scenarios which use Apache rewrite + proxy to host a Zope application
-    "behind" Apache, the classic Zope recipe is to rewrite the URL, adding
-    virtual hosting information as extra path elements, which are then
-    consumed during traversal of the Zope root by the VHM.  E.g., the
-    Apache server might see a request like:
+    When configured as WSGI middleware, theis filter will convert the
+    path information in the environment from the "X-Vhm" headers added
+    to the request into the "standard" CGI environment variables
+    outlined above.  It will also place repoze.vhm-specific
+    environment variables into the WSGI environment for consumption by
+    repoze.zope2 (or another application which chooses to use its
+    services).
 
-      http://www.example.com/news/politics/local/mayor_impeached.html
+    If this filter is placed into the pipeline in front of a Zope 2
+    application, the standard Virtual Host Monster object
+    ('/virtual_hosting') may be deleted, as it is no longer necessary.
+    However, it does not need to be deleted; repoze.vhm will work if
+    it is present.
 
-    And rewrite it onto the Zope backend as something like:
+    The filter requires no configuration; it can be added to any
+    pipeline via its egg name: "egg:repoze.vhm#vhm_xheaders".
 
-      http://localhost:8080/VirtualHostBase/http/www.example.com:80/cms/VirtualHostRoot/news/politics/local/mayor_impeached.html
+  repoze.vhm Virtual Hosting Model
 
-    The VHM would then transform the request, re-converting the path into:
-
-      /cms/news/politics/local/mayor_impeached.html
-
-    setting the "virtual root" of the request to the '/cms' object,
-    and also setting the 'SERVER_URL' in the request to:
-
-      http://www.example.com/
-
-  Zope3 Virtual Hosting Model
-
-    TODO:  show the example using Z3's syntax.
-
-  Proxy Headers Virtual Hosting Model
-
-    This model, based on a "suggestion of Ian Bicking's",
-    http://blog.ianbicking.org/2007/08/10/defaults-inheritance/ ,
+    This model (based on a "suggestion of Ian Bicking's",
+    http://blog.ianbicking.org/2007/08/10/defaults-inheritance/),
     passes virtual hosting information from the proxy / web server to
     the application by adding extra headers to the proxied request:
 
@@ -85,44 +78,64 @@ repoze.vhm README
      'HTTP_X_VHM_ROOT' -- path of the object within the application
         which is supposed to function as the "virtual root".
 
-    When serving an application from "within" Apache, we can just set
-    the environment directly::
+    When serving an application from "within" Apache via mod_wsgi, we
+    can just set the environment directly::
 
       <Directory /path/to/wsgiapp>
-       SetEnv HTTP_X_VHM_HOST http://www.example.com/
-       SetEnv HTTP_X_VHM_ROOT /cms
+        SetEnv HTTP_X_VHM_HOST http://www.example.com/
+        SetEnv HTTP_X_VHM_ROOT /cms
       </Directory>
 
-    Proxies pass this information by adding additional headers.  E.g.,
-    a sample Apache configuration for the example above might be::
+    If you are serving repoze.zope2 via a proxy rewrite rule, you may
+    pass this information by adding additional headers.  E.g., a
+    sample Apache configuration for the example above might be::
 
       <VirtualHost *:80>
         ServerName www.example.com
         RewriteEngine on
-        RewriteRule ^/(.*) http://localhost:8080/$1
+        RewriteRule ^/(.*) http://localhost:8080/$1 [P,L]
         Header add X-VHm-Host http://www.example.com/
         Header add X-VHm-Root /cms
       </VirtualHost>
 
-  'repoze.vhm' WSGI Filters
+    In either of the above example cases, the effect on repoze.zope2
+    when repoze.vhm's filter is in the WSGI pipeline is the same: the
+    apparent root of "http://www.example.com" will be the default view
+    of the object that has a physical path of "/cms".  Additionally,
+    paths in URLs generated by Zope will not start with '/cms', and
+    the scheme and hostname in URLs will be "http://www.example.com"
+    as opposed to "http://localhost:8080".  
+ 
+    The "vhm host" header may contain further path information as
+    necessary; further path information can (and will, in the case of
+    repoze.zope2) be respected by downstream applications to root an
+    application at a non-server-root path ::
 
-    This package provides two filters for use in the "behind" (proxied)
-    scenario described above, one for each model.  When configured as
-    WSGI middleware, these filters convert the path information in the
-    environment from the Zope-specific syntax into the "standard" CGI
-    environment variables outlined above.
+      <Directory /path/to/wsgiapp>
+        SetEnv HTTP_X_VHM_HOST http://www.example.com/further/path
+        SetEnv HTTP_X_VHM_ROOT /cms
+      </Directory>
+
+    In this case, URLs generated by Zope will begin with
+    "http://www.example.com/further/path".  This syntax replaces the
+    "inside out" virtual hosting syntax ('_vh_' segment markers in the
+    URL) as described in the "Virtual Host Monster" documentation.
+
+    The "vhm host" and "vhm root" headers can be used independently
+    (the system will operate as you would expect in the absence of one
+    or the other).
 
   'repoze.vhm' Library API
 
-    Because the existing Zope virtual hosting solutions do not rely
-    on the "standard" CGI variables, the application dispatcher needs to
-    "fix up" the environment to match Zope's expectations.  'repoze.vhm'
-    offers the following functions to aid in this fixup:
+    Because the existing Zope 2 virtual hosting machinery does not
+    rely on the "standard" CGI variables, the application dispatcher
+    needs to "fix up" the environment to match Zope's expectations.
+    'repoze.vhm' offers the following functions to aid in this fixup:
 
-      'repoze.vhm.zope2.setServerURL' -- convert the standard CGI
+      'repoze.vhm.utils.setServerURL' -- convert the standard CGI
         virtual hosting environment into the form expected by Zope2
         (adding the 'SERVER_URL' key).
 
-      'repoze.vhm.zope2.setVirtualRoot' -- mark the object serving
-        as the virtual root for the current Zope2 request. (TODO)
+      'repoze.vhm.utils.getVirtualRoot' -- return the virtual root
+        path ('repoze.vhm.virtual_root') as set by the middleware.
 
