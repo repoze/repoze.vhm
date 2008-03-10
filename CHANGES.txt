@@ -1,3 +1,7 @@
+0.5
+
+  Brown bag release: I fudged the entry point for the xheaders filter.
+
 0.4 (2008-03-09)
 
   Kill off path-segment-based filter (repoze.vhm.zope2).  Only the
