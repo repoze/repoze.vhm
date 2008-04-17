@@ -46,7 +46,7 @@ repoze.vhm README
 
   'repoze.vhm#xheaders' WSGI Filter
 
-    When configured as WSGI middleware, theis filter will convert the
+    When configured as WSGI middleware, this filter will convert the
     path information in the environment from the "X-Vhm" headers added
     to the request into the "standard" CGI environment variables
     outlined above.  It will also place repoze.vhm-specific
@@ -62,6 +62,33 @@ repoze.vhm README
 
     The filter requires no configuration; it can be added to any
     pipeline via its egg name: "egg:repoze.vhm#vhm_xheaders".
+
+  'repoze.vhm#path' WSGI Filter
+
+    As a fallback for proxies which cannot add headers to proxied
+    requests, this filter implements the same path-based virtual hosting
+    syntax used by the Zope2 Virtual Host Monster.  Because this syntax
+    is quite arcane (so much that there is a web-app for generating the
+    rewrite rules!), this filter is not recommended except for environments
+    which cannot be configured to add headers (e.g., Apache has 'mod_rewrite'
+    enabled, but cannot be changed to enable 'mod_headers').
+
+    When configured as WSGI middleware, this filter will convert the
+    path information in the environment from the classic "Zope2 virtual
+    hosting mungned URL" into the "standard" CGI environment variables
+    outlined above.  It will also place repoze.vhm-specific
+    environment variables into the WSGI environment for consumption by
+    repoze.zope2 (or another application which chooses to use its
+    services).
+
+    If this filter is placed into the pipeline in front of a Zope 2
+    application, the standard Virtual Host Monster object
+    ('/virtual_hosting') may be deleted, as it is no longer necessary.
+    However, it does not need to be deleted; repoze.vhm will work if
+    it is present.
+
+    The filter requires no configuration; it can be added to any
+    pipeline via its egg name: "egg:repoze.vhm#vhm_path".
 
   repoze.vhm Virtual Hosting Model
 
