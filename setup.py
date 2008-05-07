@@ -1,4 +1,4 @@
-__version__ = '0.6'
+__version__ = '0.7'
 
 import os
 from setuptools import setup, find_packages
@@ -24,7 +24,6 @@ setup(name='repoze.vhm',
       keywords='web application server wsgi zope repoze',
       author="Agendaless Consulting",
       author_email="repoze-dev@lists.repoze.org",
-      dependency_links=['http://dist.repoze.org'],
       url="http://www.repoze.org",
       license="BSD-derived (http://www.repoze.org/LICENSE.txt)",
       packages=find_packages(),

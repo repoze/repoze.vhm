@@ -1,3 +1,8 @@
+0.7 (2008-05-07)
+
+  Remove dependency-links= to dist.repoze.org to prevent easy_install
+  from searching there inappropriately.
+
 0.6 (2008-04-17)
 
   Re-added the path-segment-based filter as an option, to support scenarios
