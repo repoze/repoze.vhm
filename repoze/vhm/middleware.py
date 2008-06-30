@@ -16,6 +16,7 @@ from urlparse import urlsplit
 
 from repoze.vhm.constants import DEFAULT_PORTS
 
+
 class VHMFilter:
     """ WSGI ingress filter:
 
@@ -25,9 +26,10 @@ class VHMFilter:
     o After conversion, the environment should be suitable for munging
       via 'utils.setServerURL' (for compatibility with OFS.Traversable).
     """
+
     def __init__(self, application):
         self.application = application
-        
+
     def __call__(self, environ, start_response):
 
         host_header = environ.get('HTTP_X_VHM_HOST')
@@ -49,11 +51,13 @@ class VHMFilter:
 
         if root_header is not None:
             environ['repoze.vhm.virtual_root'] = root_header
- 
+
         return self.application(environ, start_response)
- 
+
+
 def make_filter(app, global_conf):
     return VHMFilter(app)
+
 
 class VHMPathFilter:
     """ WSGI ingress filter:
@@ -64,9 +68,10 @@ class VHMPathFilter:
     o After conversion, the environment should be suitable for munging
       via 'setServerURL' below (for compatibility with OFS.Traversable).
     """
+
     def __init__(self, application):
         self.application = application
-        
+
     def __call__(self, environ, start_response):
         scheme = 'HTTPS' in environ and 'https' or 'http'
         path = environ['PATH_INFO']
@@ -92,10 +97,11 @@ class VHMPathFilter:
                     port = DEFAULT_PORTS[scheme]
                 environ['SERVER_NAME'] = host
                 environ['SERVER_PORT'] = port
-                environ['repoze.vhm.virtual_host_base'] = '%s:%s' % (host, port)
+                environ['repoze.vhm.virtual_host_base'] = '%s:%s' \
+                                                          % (host, port)
 
             elif token == 'VirtualHostRoot':
-                vroot_path = real_path[:]  # prefix of vroot 
+                vroot_path = real_path[:]  # prefix of vroot
                 if vroot_path and vroot_path != ['']:
                     environ['repoze.vhm.virtual_root'] = '/'.join(vroot_path)
                 else:
@@ -106,7 +112,7 @@ class VHMPathFilter:
 
                 if token.startswith('_vh_'): # capture external subsite
                     script_name_path.append(token[len('_vh_'):])
-                else: 
+                else:
                     checking_vh_names = False
                     if script_name_path:
                         script_name_path.insert(0, '')
@@ -119,6 +125,7 @@ class VHMPathFilter:
         environ['PATH_INFO'] = '/'.join(real_path)
 
         return self.application(environ, start_response)
+
 
 def make_path_filter(app, global_conf):
     return VHMPathFilter(app)
