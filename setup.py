@@ -1,4 +1,4 @@
-__version__ = '0.7'
+__version__ = '0.8dev'
 
 import os
 from setuptools import setup, find_packages
@@ -29,6 +29,7 @@ setup(name='repoze.vhm',
       packages=find_packages(),
       include_package_data=True,
       namespace_packages=['repoze'],
+      install_requires=['setuptools'],
       zip_safe=False,
       test_suite = "repoze.vhm.tests",
       entry_points="""
