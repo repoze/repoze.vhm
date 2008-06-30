@@ -43,6 +43,7 @@ class VHMFilter:
                 port = DEFAULT_PORTS[scheme]
             environ['wsgi.url_scheme'] = scheme
             environ['SERVER_NAME'] = host
+            environ['HTTP_HOST'] = host
             environ['SERVER_PORT'] = port
             environ['SCRIPT_NAME'] = path
             environ['repoze.vhm.virtual_host_base'] = '%s:%s' % (host, port)
@@ -96,6 +97,7 @@ class VHMPathFilter:
                 else:
                     port = DEFAULT_PORTS[scheme]
                 environ['SERVER_NAME'] = host
+                environ['HTTP_HOST'] = host
                 environ['SERVER_PORT'] = port
                 environ['repoze.vhm.virtual_host_base'] = '%s:%s' \
                                                           % (host, port)
