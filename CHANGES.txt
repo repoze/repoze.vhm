@@ -1,40 +1,56 @@
-0.7 (2008-05-07)
+repoze.vhm Changelog
+====================
 
-  Remove dependency-links= to dist.repoze.org to prevent easy_install
+0.8 (2009-01-10)
+----------------
+
+- Set 'HTTP_HOST' in environ to the same value as 'SERVER_NAME', FBO apps
+  which need it.
+
+0.7 (2008-05-07)
+----------------
+
+- Remove 'dependency-links=' to dist.repoze.org to prevent easy_install
   from searching there inappropriately.
 
 0.6 (2008-04-17)
+----------------
 
-  Re-added the path-segment-based filter as an option, to support scenarios
+- Re-added the path-segment-based filter as an option, to support scenarios
   in which the reverse proxy can be configured to rewrite the URL but not
   to add headers.
 
 0.5 (2008-03-09)
+----------------
 
-  Brown bag release: I fudged the entry point for the xheaders filter.
+- Brown bag release: I fudged the entry point for the xheaders filter.
 
 0.4 (2008-03-09)
+----------------
 
-  Kill off path-segment-based filter (repoze.vhm.zope2).  Only the
+- Kill off path-segment-based filter (repoze.vhm.zope2).  Only the
   xheaders filter remains.
 
-  Add license headers.
+- Add license headers.
 
-  The middleware now sets a 'repoze.vhm.virtual_host_base' which is
+- The middleware now sets a 'repoze.vhm.virtual_host_base' which is
   preferred by setServerUrl over 'HTTP_HOST' when present.
 
-  Add a getVirtualRoot API.
+- Add a getVirtualRoot API.
 
-0.3
+0.3 (2007-10-25)
+----------------
 
-  Fix setServerURL method to take into account HTTP_HOST passed by
+- Fix setServerURL method to take into account HTTP_HOST passed by
   client.
 
-0.2
+0.2 (2007-09-22)
+----------------
 
-  Change repoze.vhm.zope2:setServerURL to allow Zope 2 to generate the
+- Change repoze.vhm.zope2:setServerURL to allow Zope 2 to generate the
   correct request['URL'] value when the vhm is in the pipeline.
 
-0.1
+0.1 (2007-09-21)
+----------------
 
-  Initial release.
+- Initial release.
