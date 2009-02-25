@@ -121,8 +121,8 @@ repoze.vhm README
         ServerName www.example.com
         RewriteEngine on
         RewriteRule ^/(.*) http://localhost:8080/$1 [P,L]
-        Header add X-VHm-Host http://www.example.com/
-        Header add X-VHm-Root /cms
+        RequestHeader add X-Vhm-Host http://www.example.com
+        RequestHeader add X-Vhm-Root /cms
       </VirtualHost>
 
     In either of the above example cases, the effect on repoze.zope2
