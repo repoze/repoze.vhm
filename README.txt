@@ -109,7 +109,7 @@ repoze.vhm README
     can just set the environment directly::
 
       <Directory /path/to/wsgiapp>
-        SetEnv HTTP_X_VHM_HOST http://www.example.com/
+        SetEnv HTTP_X_VHM_HOST http://www.example.com
         SetEnv HTTP_X_VHM_ROOT /cms
       </Directory>
 
