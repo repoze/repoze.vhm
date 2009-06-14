@@ -1,6 +1,11 @@
 repoze.vhm Changelog
 ====================
 
+Next release
+------------
+
+- 100% test coverage.
+
 0.8 (2009-01-10)
 ----------------
 

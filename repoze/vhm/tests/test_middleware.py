@@ -14,7 +14,7 @@
 
 import unittest
 
-class TestXHeaders(unittest.TestCase):
+class TestVHMFilter(unittest.TestCase):
     def _getTargetClass(self):
         from repoze.vhm.middleware import VHMFilter
         return VHMFilter
@@ -44,6 +44,23 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
+
+    def test___call___no_colon_in_netloc(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                   'HTTP_X_VHM_HOST':'http://abc',
+                  }
+
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'abc')
+
 
     def test___call___X_VHM_HOST_only_explicit_port(self):
         expected = {}
@@ -126,6 +143,22 @@ class TestVHMPathFilter(unittest.TestCase):
 
     def _makeOne(self, app):
         return self._getTargetClass()(app)
+
+    def test___call___no_colon_in_netloc(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        PREFIX = '/VirtualHostBase/http/example.com'
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
+                   'SERVER_PORT': '8080',
+                   'SCRIPT_NAME': '/script',
+                   'PATH_INFO': PREFIX + REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'example.com')
 
     def test___call___no_markers_unchanged(self):
         # Environments which do not have markers don't get munged.
@@ -277,6 +310,24 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/')
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
+
+class TestMakeFilter(unittest.TestCase):
+    def _callFUT(self, app, global_conf=None):
+        from repoze.vhm.middleware import make_filter
+        return make_filter(app, global_conf)
+
+    def test_it(self):
+        filter = self._callFUT(None)
+        self.assertEqual(filter.application, None)
+
+class TestMakePathFilter(unittest.TestCase):
+    def _callFUT(self, app, global_conf=None):
+        from repoze.vhm.middleware import make_path_filter
+        return make_path_filter(app, global_conf)
+
+    def test_it(self):
+        filter = self._callFUT(None)
+        self.assertEqual(filter.application, None)
 
 def noopStartResponse(status, headers):
     pass
