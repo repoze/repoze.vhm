@@ -15,7 +15,7 @@
 from urlparse import urlsplit
 
 from repoze.vhm.constants import DEFAULT_PORTS
-
+portvalues = DEFAULT_PORTS.values()
 
 class VHMFilter:
     """ WSGI ingress filter:
@@ -44,10 +44,10 @@ class VHMFilter:
             environ['wsgi.url_scheme'] = scheme
             environ['SERVER_NAME'] = host
             
-            if port == '80':
+            if port in portvalues:
                 environ['HTTP_HOST'] = host
             else:
-                environ['HTTP_HOST'] = "%s:%s" % (host, port,)
+                environ['HTTP_HOST'] = "%s:%s" % (host, port)
                 
             environ['SERVER_PORT'] = port
             environ['SCRIPT_NAME'] = path

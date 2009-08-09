@@ -78,6 +78,24 @@ class TestVHMFilter(unittest.TestCase):
         self.assertEqual(environ['SERVER_NAME'], 'abc')
         self.assertEqual(environ['SERVER_PORT'], '80')
         self.assertEqual(environ['HTTP_HOST'], 'abc')
+
+    def test___call___port_443(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'https',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                   'HTTP_X_VHM_HOST':'https://abc:443',
+                  }
+
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'abc')
+        self.assertEqual(environ['SERVER_PORT'], '443')
+        self.assertEqual(environ['HTTP_HOST'], 'abc')
     
     def test___call___no_port(self):
         expected = {}
@@ -97,7 +115,7 @@ class TestVHMFilter(unittest.TestCase):
         self.assertEqual(environ['SERVER_PORT'], '80')
         self.assertEqual(environ['HTTP_HOST'], 'abc')
     
-    def test___call___port_not_80(self):
+    def test___call___port_not_default(self):
         expected = {}
         app = VHMTestApp(expected)
         filter = self._makeOne(app)
