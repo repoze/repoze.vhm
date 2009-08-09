@@ -60,7 +60,60 @@ class TestVHMFilter(unittest.TestCase):
 
         filter(environ, noopStartResponse)
         self.assertEqual(environ['SERVER_NAME'], 'abc')
+    
+    def test___call___port_80(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                   'HTTP_X_VHM_HOST':'http://abc:80',
+                  }
 
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'abc')
+        self.assertEqual(environ['SERVER_PORT'], '80')
+        self.assertEqual(environ['HTTP_HOST'], 'abc')
+    
+    def test___call___no_port(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                   'HTTP_X_VHM_HOST':'http://abc',
+                  }
+
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'abc')
+        self.assertEqual(environ['SERVER_PORT'], '80')
+        self.assertEqual(environ['HTTP_HOST'], 'abc')
+    
+    def test___call___port_not_80(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                   'HTTP_X_VHM_HOST':'http://abc:81',
+                  }
+
+        filter(environ, noopStartResponse)
+        self.assertEqual(environ['SERVER_NAME'], 'abc')
+        self.assertEqual(environ['SERVER_PORT'], '81')
+        self.assertEqual(environ['HTTP_HOST'], 'abc:81')
 
     def test___call___X_VHM_HOST_only_explicit_port(self):
         expected = {}

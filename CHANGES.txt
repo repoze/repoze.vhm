@@ -6,6 +6,11 @@ Next release
 
 - 100% test coverage.
 
+0.9 (unreleased)
+----------------
+
+- Make sure port name is set properly in the HTTP_HOST header.
+
 0.8 (2009-01-10)
 ----------------
 
