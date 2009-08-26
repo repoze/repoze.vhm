@@ -44,7 +44,7 @@ repoze.vhm README
       'PATH_INFO' -- the remainder of the path, after removing any parts
         used in dispatch.
 
-  'repoze.vhm#xheaders' WSGI Filter
+  'repoze.vhm#vhm_xheaders' WSGI Filter
 
     When configured as WSGI middleware, this filter will convert the
     path information in the environment from the "X-Vhm" headers added
@@ -63,7 +63,7 @@ repoze.vhm README
     The filter requires no configuration; it can be added to any
     pipeline via its egg name: "egg:repoze.vhm#vhm_xheaders".
 
-  'repoze.vhm#path' WSGI Filter
+  'repoze.vhm#vhm_path' WSGI Filter
 
     As a fallback for proxies which cannot add headers to proxied
     requests, this filter implements the same path-based virtual hosting
