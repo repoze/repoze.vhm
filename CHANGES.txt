@@ -1,8 +1,8 @@
 repoze.vhm Changelog
 ====================
 
-0.10
-----
+0.10 (2009-08-26)
+-----------------
 
 - Apply the HTTP_HOST port number fix to the VHM Path filter as well.
 
