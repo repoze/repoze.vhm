@@ -1,8 +1,5 @@
-- Figure out how to call 'request.serVirtualRoot' in the "stock CGI
+- Figure out how to call 'request.setVirtualRoot' in the "stock CGI
   environment" case.
-
-- Add the various Limi-placating environment variables to the environment
-  ('ACTUAL_URL', 'VIRTUAL_URL', etc.) inside 'setServerURL'.
 
 - Implement Z3 filter.
 

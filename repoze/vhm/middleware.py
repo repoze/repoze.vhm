@@ -15,7 +15,7 @@
 from urlparse import urlsplit
 
 from repoze.vhm.constants import DEFAULT_PORTS
-portvalues = DEFAULT_PORTS.values()
+from repoze.vhm.utils import getServerURL
 
 class VHMFilter:
     """ WSGI ingress filter:
@@ -31,10 +31,16 @@ class VHMFilter:
         self.application = application
 
     def __call__(self, environ, start_response):
-
+        
         host_header = environ.get('HTTP_X_VHM_HOST')
-
+        
+        vroot_path = []
+        vhosting = False
+        
         if host_header is not None:
+            
+            vhosting = True
+            
             (scheme, netloc, path, query, fragment) = urlsplit(host_header)
             if ':' in netloc:
                 host, port = netloc.split(':')
@@ -43,12 +49,7 @@ class VHMFilter:
                 port = DEFAULT_PORTS[scheme]
             environ['wsgi.url_scheme'] = scheme
             environ['SERVER_NAME'] = host
-            
-            if port in portvalues:
-                environ['HTTP_HOST'] = host
-            else:
-                environ['HTTP_HOST'] = "%s:%s" % (host, port)
-                
+            environ['HTTP_HOST'] = "%s:%s" % (host, port,)
             environ['SERVER_PORT'] = port
             environ['SCRIPT_NAME'] = path
             environ['repoze.vhm.virtual_host_base'] = '%s:%s' % (host, port)
@@ -56,8 +57,34 @@ class VHMFilter:
         root_header = environ.get('HTTP_X_VHM_ROOT')
 
         if root_header is not None:
+            vhosting = True
             environ['repoze.vhm.virtual_root'] = root_header
-
+            vroot_path = root_header.split('/')
+        
+        if vhosting:
+            server_url = getServerURL(environ)
+            virtual_url_parts = [server_url]
+            
+            script_name = environ['SCRIPT_NAME']
+            if script_name and script_name != '/':
+                script_name_path = script_name.split('/')
+                if len(script_name_path) > 1:
+                    virtual_url_parts += script_name_path[1:]
+            
+            real_path = environ['PATH_INFO'].split('/')
+            if vroot_path:
+                virtual_url_parts += real_path[len(vroot_path):]
+            else:
+                virtual_url_parts += real_path[1:]
+            
+            if virtual_url_parts[-1] == '':
+                virtual_url_parts.pop()
+            
+            # Store the virtual URL. Zope computes ACTUAL_URL from this, for example.
+            
+            environ['VIRTUAL_URL_PARTS'] = virtual_url_parts
+            environ['VIRTUAL_URL'] = '/'.join(virtual_url_parts)
+        
         return self.application(environ, start_response)
 
 
@@ -79,19 +106,24 @@ class VHMPathFilter:
         self.application = application
 
     def __call__(self, environ, start_response):
+        
         scheme = 'HTTPS' in environ and 'https' or 'http'
         path = environ['PATH_INFO']
         vroot_path = []
         real_path = []
+        script_name = ''
         script_name_path = []
         checking_vh_names = False
-
+        vhosting = False
+        
         elements = path.split('/')
         while elements:
 
             token = elements.pop(0)
 
             if token == 'VirtualHostBase':
+                
+                vhosting = True
 
                 scheme = elements.pop(0)
                 environ['wsgi.url_scheme'] = scheme
@@ -102,12 +134,7 @@ class VHMPathFilter:
                 else:
                     port = DEFAULT_PORTS[scheme]
                 environ['SERVER_NAME'] = host
-                
-                if port in portvalues:
-                    environ['HTTP_HOST'] = host
-                else:
-                    environ['HTTP_HOST'] = "%s:%s" % (host, port)
-                
+                environ['HTTP_HOST'] = host
                 environ['SERVER_PORT'] = port
                 environ['repoze.vhm.virtual_host_base'] = '%s:%s' \
                                                           % (host, port)
@@ -128,14 +155,34 @@ class VHMPathFilter:
                     checking_vh_names = False
                     if script_name_path:
                         script_name_path.insert(0, '')
-                        environ['SCRIPT_NAME'] = '/'.join(script_name_path)
+                        environ['SCRIPT_NAME'] = script_name = '/'.join(script_name_path)
                     real_path.append(token)
 
             else:
                 real_path.append(token)
-
+        
         environ['PATH_INFO'] = '/'.join(real_path)
-
+        
+        if vhosting:
+            server_url = getServerURL(environ)
+            virtual_url_parts = [server_url]
+            
+            if script_name_path:
+                virtual_url_parts += script_name_path[1:]
+            
+            if vroot_path:
+                virtual_url_parts += real_path[len(vroot_path):]
+            else:
+                virtual_url_parts += real_path[1:]
+            
+            if virtual_url_parts[-1] == '':
+                virtual_url_parts.pop()
+            
+            # Store the virtual URL. Zope computes ACTUAL_URL from this, for example.
+            
+            environ['VIRTUAL_URL_PARTS'] = virtual_url_parts
+            environ['VIRTUAL_URL'] = '/'.join(virtual_url_parts)
+        
         return self.application(environ, start_response)
 
 

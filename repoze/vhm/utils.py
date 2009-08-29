@@ -13,13 +13,17 @@
 ##############################################################################
 
 from urlparse import urlunsplit
-
 from repoze.vhm.constants import DEFAULT_PORTS
 
 def setServerURL(environ):
     """ Compute Zope2 'SERVER_URL' using WSGI environment.
 
     o Write the key into the environment.
+    """
+    environ['SERVER_URL'] = getServerURL(environ)
+
+def getServerURL(environ):
+    """ Compute and return Zope2 'SERVER_URL' using WSGI environment.
     """
     scheme = environ.get('wsgi.url_scheme')
     if scheme is None:
@@ -43,15 +47,12 @@ def setServerURL(environ):
         host = environ.get('SERVER_NAME', 'localhost')
         port = environ.get('SERVER_PORT', '8080')
 
-    script_name = environ.get('SCRIPT_NAME', '/')
-
     if port is not None and port != DEFAULT_PORTS.get(scheme):
         netloc = '%s:%s' % (host, port)
     else:
         netloc = host
 
-    url = urlunsplit((scheme, netloc, '', '', ''))
-    environ['SERVER_URL'] = url
+    return urlunsplit((scheme, netloc, '', '', ''))
  
 def getVirtualRoot(environ):
     return environ.get('repoze.vhm.virtual_root')
