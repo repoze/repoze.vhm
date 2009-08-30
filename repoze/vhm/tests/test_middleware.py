@@ -42,8 +42,7 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '8888')
         self.assertEqual(expected['SCRIPT_NAME'], '/')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected.get('VIRTUAL_URL'), None)
-        self.assertEqual(expected.get('VIRTUAL_URL_PARTS'), None)
+        self.assertEqual(expected.get('repoze.vhm.virtual_url'), None)
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
 
@@ -68,8 +67,7 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com/script/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com', 'script', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/script/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
@@ -95,8 +93,7 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com/script/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com', 'script', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/script/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
@@ -122,8 +119,7 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '8080')
         self.assertEqual(expected['SCRIPT_NAME'], '/')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://localhost:8080/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://localhost:8080', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://localhost:8080/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/a/b')
         self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
 
@@ -155,8 +151,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '8888')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected.get('VIRTUAL_URL'), None)
-        self.assertEqual(expected.get('VIRTUAL_URL_PARTS'), None)
+        self.assertEqual(expected.get('repoze.vhm.virtual_url'), None)
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
 
@@ -182,8 +177,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
@@ -208,8 +202,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '8000')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com:8000/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com:8000', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com:8000/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:8000')
@@ -236,8 +229,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '443')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'https://example.com/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['https://example.com', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'https://example.com/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/')
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:443')
@@ -264,8 +256,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
         self.assertEqual(expected['PATH_INFO'], '/sub1' + REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/sub1')
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
@@ -292,8 +283,7 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
         self.assertEqual(expected['PATH_INFO'], REAL_PATH)
-        self.assertEqual(expected['VIRTUAL_URL'], 'http://example.com/sub1/sub2/a/b/c')
-        self.assertEqual(expected['VIRTUAL_URL_PARTS'], ['http://example.com', 'sub1', 'sub2', 'a', 'b', 'c'])
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/sub1/sub2/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/')
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')

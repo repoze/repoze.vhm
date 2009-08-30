@@ -80,10 +80,9 @@ class VHMFilter:
             if virtual_url_parts[-1] == '':
                 virtual_url_parts.pop()
             
-            # Store the virtual URL. Zope computes ACTUAL_URL from this, for example.
+            # Store the virtual URL
             
-            environ['VIRTUAL_URL_PARTS'] = virtual_url_parts
-            environ['VIRTUAL_URL'] = '/'.join(virtual_url_parts)
+            environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
         
         return self.application(environ, start_response)
 
@@ -179,9 +178,7 @@ class VHMPathFilter:
                 virtual_url_parts.pop()
             
             # Store the virtual URL. Zope computes ACTUAL_URL from this, for example.
-            
-            environ['VIRTUAL_URL_PARTS'] = virtual_url_parts
-            environ['VIRTUAL_URL'] = '/'.join(virtual_url_parts)
+            environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
         
         return self.application(environ, start_response)
 

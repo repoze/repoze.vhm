@@ -56,3 +56,6 @@ def getServerURL(environ):
  
 def getVirtualRoot(environ):
     return environ.get('repoze.vhm.virtual_root')
+
+def getVirtualURL(environ):
+    return environ.get('repoze.vhm.virtual_url')
