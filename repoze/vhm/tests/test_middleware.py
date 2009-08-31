@@ -123,6 +123,113 @@ class TestXHeaders(unittest.TestCase):
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/a/b')
         self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
 
+class TestExplicit(unittest.TestCase):
+    def _getTargetClass(self):
+        from repoze.vhm.middleware import VHMExplicitFilter
+        return VHMExplicitFilter
+
+    def _makeOne(self, app, host=None, root=None):
+        return self._getTargetClass()(app, host, root)
+
+    def test___call___no_markers_unchanged(self):
+        # Environments which do not have markers don't get munged.
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(expected.get('wsgi.url_scheme'), 'http')
+        self.assertEqual(expected['SERVER_NAME'], 'example.com')
+        self.assertEqual(expected['SERVER_PORT'], '8888')
+        self.assertEqual(expected['SCRIPT_NAME'], '/')
+        self.assertEqual(expected['PATH_INFO'], REAL_PATH)
+        self.assertEqual(expected.get('repoze.vhm.virtual_url'), None)
+        self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
+        self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
+
+    def test___call___host_only_explicit_port(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        X_VHM_HOST = 'http://example.com:80/script'
+        filter = self._makeOne(app, host=X_VHM_HOST)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
+                   'SERVER_PORT': '8080',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['SERVER_NAME'], 'example.com')
+        self.assertEqual(expected['SERVER_PORT'], '80')
+        self.assertEqual(expected['SCRIPT_NAME'], '/script')
+        self.assertEqual(expected['PATH_INFO'], REAL_PATH)
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/script/a/b/c')
+        self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
+        self.assertEqual(expected['repoze.vhm.virtual_host_base'],
+                         'example.com:80')
+
+    def test___call___host_only_default_port(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        X_VHM_HOST = 'http://example.com:80/script'
+        filter = self._makeOne(app, host=X_VHM_HOST)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
+                   'SERVER_PORT': '8080',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['SERVER_NAME'], 'example.com')
+        self.assertEqual(expected['SERVER_PORT'], '80')
+        self.assertEqual(expected['SCRIPT_NAME'], '/script')
+        self.assertEqual(expected['PATH_INFO'], REAL_PATH)
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://example.com/script/a/b/c')
+        self.assertEqual(expected.get('repoze.vhm.virtual_root'), None)
+        self.assertEqual(expected['repoze.vhm.virtual_host_base'],
+                         'example.com:80')
+
+    def test___call___root(self):
+        expected = {}
+        app = VHMTestApp(expected)
+        X_VHM_ROOT = '/a/b'
+        filter = self._makeOne(app, root=X_VHM_ROOT)
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
+                   'SERVER_PORT': '8080',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(expected.get('wsgi.url_scheme'), 'http')
+        self.assertEqual(expected['SERVER_NAME'], 'localhost')
+        self.assertEqual(expected['SERVER_PORT'], '8080')
+        self.assertEqual(expected['SCRIPT_NAME'], '/')
+        self.assertEqual(expected['PATH_INFO'], REAL_PATH)
+        self.assertEqual(expected['repoze.vhm.virtual_url'], 'http://localhost:8080/c')
+        self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/a/b')
+        self.assertEqual(expected.get('repoze.vhm.virtual_host_base'), None)
+
+
 class TestVHMPathFilter(unittest.TestCase):
     def _getTargetClass(self):
         from repoze.vhm.middleware import VHMPathFilter

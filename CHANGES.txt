@@ -4,6 +4,10 @@ repoze.vhm Changelog
 0.11
 -----------------
 
+- Add a repoze.vhm#vhm_explicit filter. This is like the vhm_xheaders
+  middleware, but the VHM host and/or root are set in the WSGI configuration
+  instead of in the request.
+
 - Calculate a VIRTUAL_URL and put it into the environment. This is basically
   the URL that the end user sees. repoze.zope2 >= 1.0.2 uses this to compute
   the ACTUAL_URL request variable, for example.

@@ -17,6 +17,58 @@ from urlparse import urlsplit
 from repoze.vhm.constants import DEFAULT_PORTS
 from repoze.vhm.utils import getServerURL
 
+def munge(environ, host_header=None, root_header=None):
+    """Update the environment based on a host header and/or a VHM root.
+    """
+    
+    vroot_path = []
+    vhosting = False
+    
+    if host_header is not None:
+        
+        vhosting = True
+        
+        (scheme, netloc, path, query, fragment) = urlsplit(host_header)
+        if ':' in netloc:
+            host, port = netloc.split(':')
+        else:
+            host = netloc
+            port = DEFAULT_PORTS[scheme]
+        environ['wsgi.url_scheme'] = scheme
+        environ['SERVER_NAME'] = host
+        environ['HTTP_HOST'] = "%s:%s" % (host, port,)
+        environ['SERVER_PORT'] = port
+        environ['SCRIPT_NAME'] = path
+        environ['repoze.vhm.virtual_host_base'] = '%s:%s' % (host, port)
+
+    if root_header is not None:
+        vhosting = True
+        environ['repoze.vhm.virtual_root'] = root_header
+        vroot_path = root_header.split('/')
+    
+    if vhosting:
+        server_url = getServerURL(environ)
+        virtual_url_parts = [server_url]
+        
+        script_name = environ['SCRIPT_NAME']
+        if script_name and script_name != '/':
+            script_name_path = script_name.split('/')
+            if len(script_name_path) > 1:
+                virtual_url_parts += script_name_path[1:]
+        
+        real_path = environ['PATH_INFO'].split('/')
+        if vroot_path:
+            virtual_url_parts += real_path[len(vroot_path):]
+        else:
+            virtual_url_parts += real_path[1:]
+        
+        if virtual_url_parts[-1] == '':
+            virtual_url_parts.pop()
+        
+        # Store the virtual URL
+        
+        environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
+
 class VHMFilter:
     """ WSGI ingress filter:
 
@@ -31,65 +83,45 @@ class VHMFilter:
         self.application = application
 
     def __call__(self, environ, start_response):
-        
         host_header = environ.get('HTTP_X_VHM_HOST')
-        
-        vroot_path = []
-        vhosting = False
-        
-        if host_header is not None:
-            
-            vhosting = True
-            
-            (scheme, netloc, path, query, fragment) = urlsplit(host_header)
-            if ':' in netloc:
-                host, port = netloc.split(':')
-            else:
-                host = netloc
-                port = DEFAULT_PORTS[scheme]
-            environ['wsgi.url_scheme'] = scheme
-            environ['SERVER_NAME'] = host
-            environ['HTTP_HOST'] = "%s:%s" % (host, port,)
-            environ['SERVER_PORT'] = port
-            environ['SCRIPT_NAME'] = path
-            environ['repoze.vhm.virtual_host_base'] = '%s:%s' % (host, port)
-
         root_header = environ.get('HTTP_X_VHM_ROOT')
-
-        if root_header is not None:
-            vhosting = True
-            environ['repoze.vhm.virtual_root'] = root_header
-            vroot_path = root_header.split('/')
-        
-        if vhosting:
-            server_url = getServerURL(environ)
-            virtual_url_parts = [server_url]
-            
-            script_name = environ['SCRIPT_NAME']
-            if script_name and script_name != '/':
-                script_name_path = script_name.split('/')
-                if len(script_name_path) > 1:
-                    virtual_url_parts += script_name_path[1:]
-            
-            real_path = environ['PATH_INFO'].split('/')
-            if vroot_path:
-                virtual_url_parts += real_path[len(vroot_path):]
-            else:
-                virtual_url_parts += real_path[1:]
-            
-            if virtual_url_parts[-1] == '':
-                virtual_url_parts.pop()
-            
-            # Store the virtual URL
-            
-            environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
-        
+        munge(environ, host_header, root_header)
         return self.application(environ, start_response)
-
 
 def make_filter(app, global_conf):
     return VHMFilter(app)
 
+class VHMExplicitFilter:
+    """ WSGI ingress filter:
+
+    o Converts explicitly set host and/or VHM root into "stock" CGI
+      equivalents, with extra keys in the 'repoze.vhm' namespace.
+
+    o After conversion, the environment should be suitable for munging
+      via 'utils.setServerURL' (for compatibility with OFS.Traversable).
+      
+    Two configuration parameters are available, both optional.
+    
+    host -- If set, the HOST header and repoze.vhm.virtual_host_base will be
+        set.
+    root -- If set, repoze.vhm.virtual_root will be set.
+    
+    If either option is set, repoze.vhm.virtual_url will be calculated and
+    set.
+    """
+
+    def __init__(self, application, host=None, root=None):
+        self.application = application
+        self.host = host
+        self.root = root
+
+    def __call__(self, environ, start_response):
+        munge(environ, self.host, self.root)
+        return self.application(environ, start_response)
+
+
+def make_explicit_filter(app, global_conf, host=None, root=None):
+    return VHMExplicitFilter(app, host, root)
 
 class VHMPathFilter:
     """ WSGI ingress filter:

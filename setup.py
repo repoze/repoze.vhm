@@ -35,6 +35,7 @@ setup(name='repoze.vhm',
       entry_points="""
       [paste.filter_app_factory]
       vhm_xheaders = repoze.vhm.middleware:make_filter
+      vhm_explicit = repoze.vhm.middleware:make_explicit_filter
       vhm_path = repoze.vhm.middleware:make_path_filter
       """,
       )

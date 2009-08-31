@@ -78,7 +78,24 @@ present.
 The filter requires no configuration; it can be added to any pipeline
 via its egg name: ``egg:repoze.vhm#vhm_xheaders``.
 
-``repoze.vhm#path`` WSGI Filter
+``repoze.vhm#vhm_explicit`` WSGI Filter
+---------------------------------------
+
+This filter is like the repoze.vhm#vhm_xheaders filter, but instead of taking
+the virtual host and/or root from the environment, they are explicitly
+configured when the middleware is instantiated.
+
+If using paste.deploy, this looks like::
+
+  [filter:vhm]
+  use = egg:repoze.vhm#vhm_explicit
+  host = http://www.example.com
+  root = /mysite
+
+Both 'host' and 'root' are optional, but you probably want to specify at
+least one of them.
+
+``repoze.vhm#vhm_path`` WSGI Filter
 -------------------------------
 
 As a fallback for proxies which cannot add headers to proxied
