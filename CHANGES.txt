@@ -1,7 +1,7 @@
 repoze.vhm Changelog
 ====================
 
-0.11
+0.11 (2009-08-31)
 -----------------
 
 - Add a repoze.vhm#vhm_explicit filter. This is like the vhm_xheaders
