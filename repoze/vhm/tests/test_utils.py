@@ -130,31 +130,27 @@ class Test_setServerURL(unittest.TestCase):
         self.assertEqual(environ['SERVER_URL'], 'http://www.example.com')
 
 class Test_getVirtualRoot(unittest.TestCase):
-    def _getFUT(self):
+    def _callFUT(self, environ):
         from repoze.vhm.utils import getVirtualRoot
-        return getVirtualRoot
+        return getVirtualRoot(environ)
 
     def test_without_virtual_root(self):
         environ = {}
-        f = self._getFUT()
-        self.assertEqual(f(environ), None)
+        self.assertEqual(self._callFUT(environ), None)
 
     def test_with_virtual_root(self):
         environ = {'repoze.vhm.virtual_root':'/abc'}
-        f = self._getFUT()
-        self.assertEqual(f(environ), '/abc')
+        self.assertEqual(self._callFUT(environ), '/abc')
 
 class Test_getVirtualURL(unittest.TestCase):
-    def _getFUT(self):
+    def _callFUT(self, environ):
         from repoze.vhm.utils import getVirtualURL
-        return getVirtualURL
+        return getVirtualURL(environ)
 
     def test_without_virtual_root(self):
         environ = {}
-        f = self._getFUT()
-        self.assertEqual(f(environ), None)
+        self.assertEqual(self._callFUT(environ), None)
 
     def test_with_virtual_root(self):
         environ = {'repoze.vhm.virtual_url':'/a/b/c'}
-        f = self._getFUT()
-        self.assertEqual(f(environ), '/a/b/c')
+        self.assertEqual(self._callFUT(environ), '/a/b/c')
