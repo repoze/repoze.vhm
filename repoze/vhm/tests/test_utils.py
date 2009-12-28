@@ -143,3 +143,18 @@ class Test_getVirtualRoot(unittest.TestCase):
         environ = {'repoze.vhm.virtual_root':'/abc'}
         f = self._getFUT()
         self.assertEqual(f(environ), '/abc')
+
+class Test_getVirtualURL(unittest.TestCase):
+    def _getFUT(self):
+        from repoze.vhm.utils import getVirtualURL
+        return getVirtualURL
+
+    def test_without_virtual_root(self):
+        environ = {}
+        f = self._getFUT()
+        self.assertEqual(f(environ), None)
+
+    def test_with_virtual_root(self):
+        environ = {'repoze.vhm.virtual_url':'/a/b/c'}
+        f = self._getFUT()
+        self.assertEqual(f(environ), '/a/b/c')
