@@ -20,14 +20,13 @@ from repoze.vhm.utils import getServerURL
 def munge(environ, host_header=None, root_header=None):
     """Update the environment based on a host header and/or a VHM root.
     """
-    
     vroot_path = []
     vhosting = False
-    
+
     if host_header is not None:
-        
+
         vhosting = True
-        
+
         (scheme, netloc, path, query, fragment) = urlsplit(host_header)
         if ':' in netloc:
             host, port = netloc.split(':')
@@ -45,28 +44,28 @@ def munge(environ, host_header=None, root_header=None):
         vhosting = True
         environ['repoze.vhm.virtual_root'] = root_header
         vroot_path = root_header.split('/')
-    
+
     if vhosting:
         server_url = getServerURL(environ)
         virtual_url_parts = [server_url]
-        
+
         script_name = environ['SCRIPT_NAME']
         if script_name and script_name != '/':
             script_name_path = script_name.split('/')
             if len(script_name_path) > 1:
                 virtual_url_parts += script_name_path[1:]
-        
+
         real_path = environ['PATH_INFO'].split('/')
         if vroot_path:
             virtual_url_parts += real_path[len(vroot_path):]
         else:
             virtual_url_parts += real_path[1:]
-        
+
         if virtual_url_parts[-1] == '':
             virtual_url_parts.pop()
-        
+
         # Store the virtual URL
-        
+
         environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
 
 class VHMFilter:
@@ -88,7 +87,7 @@ class VHMFilter:
         munge(environ, host_header, root_header)
         return self.application(environ, start_response)
 
-def make_filter(app, global_conf):
+def make_filter(app, global_conf): #pragma NO COVER
     return VHMFilter(app)
 
 class VHMExplicitFilter:
@@ -99,13 +98,13 @@ class VHMExplicitFilter:
 
     o After conversion, the environment should be suitable for munging
       via 'utils.setServerURL' (for compatibility with OFS.Traversable).
-      
+
     Two configuration parameters are available, both optional.
-    
+
     host -- If set, the HOST header and repoze.vhm.virtual_host_base will be
         set.
     root -- If set, repoze.vhm.virtual_root will be set.
-    
+
     If either option is set, repoze.vhm.virtual_url will be calculated and
     set.
     """
@@ -120,7 +119,11 @@ class VHMExplicitFilter:
         return self.application(environ, start_response)
 
 
-def make_explicit_filter(app, global_conf, host=None, root=None):
+def make_explicit_filter(app,
+                         global_conf,
+                         host=None,
+                         root=None,
+                        ): #pragma NO COVER
     return VHMExplicitFilter(app, host, root)
 
 class VHMPathFilter:
@@ -137,7 +140,7 @@ class VHMPathFilter:
         self.application = application
 
     def __call__(self, environ, start_response):
-        
+
         scheme = 'HTTPS' in environ and 'https' or 'http'
         path = environ['PATH_INFO']
         vroot_path = []
@@ -146,14 +149,14 @@ class VHMPathFilter:
         script_name_path = []
         checking_vh_names = False
         vhosting = False
-        
+
         elements = path.split('/')
         while elements:
 
             token = elements.pop(0)
 
             if token == 'VirtualHostBase':
-                
+
                 vhosting = True
 
                 scheme = elements.pop(0)
@@ -186,34 +189,36 @@ class VHMPathFilter:
                     checking_vh_names = False
                     if script_name_path:
                         script_name_path.insert(0, '')
-                        environ['SCRIPT_NAME'] = script_name = '/'.join(script_name_path)
+                        script_name = '/'.join(script_name_path)
+                        environ['SCRIPT_NAME'] = script_name
                     real_path.append(token)
 
             else:
                 real_path.append(token)
-        
+
         environ['PATH_INFO'] = '/'.join(real_path)
-        
+
         if vhosting:
             server_url = getServerURL(environ)
             virtual_url_parts = [server_url]
-            
+
             if script_name_path:
                 virtual_url_parts += script_name_path[1:]
-            
+
             if vroot_path:
                 virtual_url_parts += real_path[len(vroot_path):]
             else:
                 virtual_url_parts += real_path[1:]
-            
+
             if virtual_url_parts[-1] == '':
                 virtual_url_parts.pop()
-            
-            # Store the virtual URL. Zope computes ACTUAL_URL from this, for example.
+
+            # Store the virtual URL. Zope computes ACTUAL_URL from this,
+            # for example.
             environ['repoze.vhm.virtual_url'] = '/'.join(virtual_url_parts)
-        
+
         return self.application(environ, start_response)
 
 
-def make_path_filter(app, global_conf):
+def make_path_filter(app, global_conf): #pragma NO COVER
     return VHMPathFilter(app)
