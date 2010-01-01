@@ -84,6 +84,10 @@ class VHMFilter:
     def __call__(self, environ, start_response):
         host_header = environ.get('HTTP_X_VHM_HOST')
         root_header = environ.get('HTTP_X_VHM_ROOT')
+        
+        if root_header:
+            environ['PATH_INFO'] = root_header + environ.get('PATH_INFO', '')
+            
         munge(environ, host_header, root_header)
         return self.application(environ, start_response)
 

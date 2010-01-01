@@ -227,6 +227,41 @@ class TestXHeaders(MungeReplacer, unittest.TestCase):
 
         self.assertEqual(_munged['host_header'], X_VHM_HOST)
         self.assertEqual(_munged['root_header'], X_VHM_ROOT)
+        
+    def test___call___X_VHM_HOST_and_X_VHM_ROOT_correctly_sets_PATH_INFO(self):
+        """
+        When getting a request at ``http://example.com:80/c/d/e/f``, the 
+        PATH_INFO needs to be set to account for the actual zope root
+        """
+        _munged = self._get_munged()
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        X_VHM_HOST = 'http://example.com:80/'
+        X_VHM_ROOT = '/a/b'
+        environ = {'HTTP_X_VHM_HOST': X_VHM_HOST,
+                   'HTTP_X_VHM_ROOT': X_VHM_ROOT,
+                   'PATH_INFO' : '/c/d/e/f'
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(environ['PATH_INFO'], '/a/b/c/d/e/f')
+        
+    def test___call___X_VHM_HOST_only_does_not_set_PATH_INFO(self):
+        _munged = self._get_munged()
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        X_VHM_HOST = 'http://example.com:80/'
+        environ = {'HTTP_X_VHM_HOST': X_VHM_HOST,
+                   'PATH_INFO': '/a/b/c'
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(environ['PATH_INFO'], '/a/b/c')
+        
 
 class TestExplicit(MungeReplacer, unittest.TestCase):
 
