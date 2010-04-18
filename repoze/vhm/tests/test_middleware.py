@@ -467,6 +467,36 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:443')
 
+    def test___call___VirtualHostRoot_conservativepathinfos(self):
+        # VHR immediately following VHB + 2 -> no vroot.
+        expected = {}
+        app = VHMTestApp(expected)
+        filter = self._makeOne(app)
+        filter.conserve_path_infos = True
+        REAL_PATH = '/a/b/c/'
+        PREFIX = ('/VirtualHostBase/http/example.com:80/VirtualHostRoot'
+                  '/_vh_sub1/_vh_sub2')
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'localhost',
+                   'SERVER_PORT': '8080',
+                   'SCRIPT_NAME': '/script',
+                   'PATH_INFO': PREFIX + REAL_PATH,
+                  }
+
+        filter(environ, noopStartResponse)
+
+        self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['SERVER_NAME'], 'example.com')
+        self.assertEqual(expected['SERVER_PORT'], '80')
+        self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
+        self.assertEqual(expected['PATH_INFO'], '/VirtualHostBase/http/example.com:80'
+                         '/VirtualHostRoot/_vh_sub1/_vh_sub2/a/b/c/')
+        self.assertEqual(expected['repoze.vhm.virtual_url'],
+                                  'http://example.com/sub1/sub2/a/b/c')
+        self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/')
+        self.assertEqual(expected['repoze.vhm.virtual_host_base'],
+                         'example.com:80')  
+ 
     def test___call___VirtualHostRoot_w_subpath(self):
         # Tokens after VHB + 2, before VHR -> vroot
         expected = {}
@@ -534,3 +564,4 @@ class VHMTestApp:
         self._called_environ.clear()
         self._called_environ.update(environ)
         return self.__class__.__name__
+

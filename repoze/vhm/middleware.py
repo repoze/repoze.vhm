@@ -17,6 +17,20 @@ from urlparse import urlsplit
 from repoze.vhm.constants import DEFAULT_PORTS
 from repoze.vhm.utils import getServerURL
 
+
+# stolen from Paste not to add an explicit dependency
+def asbool(obj):
+    if isinstance(obj, (str, unicode)):
+        obj = obj.strip().lower()
+        if obj in ['true', 'yes', 'on', 'y', 't', '1']:
+            return True
+        elif obj in ['false', 'no', 'off', 'n', 'f', '0']:
+            return False
+        else:
+            raise ValueError(
+                "String is not true/false: %r" % obj)
+    return bool(obj)
+
 def munge(environ, host_header=None, root_header=None):
     """Update the environment based on a host header and/or a VHM root.
     """
@@ -136,12 +150,17 @@ class VHMPathFilter:
     o Converts Zope2 VirtualHostMonster-style URL tokens into "stock" CGI
       equivalents, with extra keys in the 'repoze.vhm' namespace.
 
+    o The arguement conserve_path_infos will keep the PATH_INFO variable intact
+      It's pretty handy when you have a separate stock zope2 zserer
+      and you want to forward the request from your WSGI pipeline
+
     o After conversion, the environment should be suitable for munging
       via 'setServerURL' below (for compatibility with OFS.Traversable).
     """
 
-    def __init__(self, application):
+    def __init__(self, application, conserve_path_infos=False):
         self.application = application
+        self.conserve_path_infos = conserve_path_infos
 
     def __call__(self, environ, start_response):
 
@@ -200,7 +219,9 @@ class VHMPathFilter:
             else:
                 real_path.append(token)
 
-        environ['PATH_INFO'] = '/'.join(real_path)
+        if not self.conserve_path_infos:
+            environ['PATH_INFO'] = '/'.join(real_path)
+            
 
         if vhosting:
             server_url = getServerURL(environ)
@@ -224,5 +245,6 @@ class VHMPathFilter:
         return self.application(environ, start_response)
 
 
-def make_path_filter(app, global_conf): #pragma NO COVER
-    return VHMPathFilter(app)
+def make_path_filter(app, global_conf, conserve_path_infos=False): #pragma NO COVER
+    conserve_path_infos = asbool(conserve_path_infos)
+    return VHMPathFilter(app, conserve_path_infos=conserve_path_infos)

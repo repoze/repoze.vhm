@@ -96,7 +96,7 @@ Both 'host' and 'root' are optional, but you probably want to specify at
 least one of them.
 
 ``repoze.vhm#vhm_path`` WSGI Filter
--------------------------------
+-------------------------------------
 
 As a fallback for proxies which cannot add headers to proxied
 requests, this filter implements the same path-based virtual hosting
@@ -122,6 +122,13 @@ present.
 
 The filter requires no configuration; it can be added to any pipeline
 via its egg name: ``egg:repoze.vhm#vhm_path``.
+
+You can set the ``conserve_path_infos`` parameter if you want only the host and port bits to be touched.::
+
+  [filter:vhm]
+  use = egg:repoze.vhm#vhm_path
+  conserve_path_infos = true
+
 
 repoze.vhm Virtual Hosting Model
 --------------------------------

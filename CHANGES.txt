@@ -1,6 +1,9 @@
 repoze.vhm Changelog
 ====================
 
+0.13 (2010-04-18)
+----------------- 
+- add conserve_path_infos for the VHMPathFilter middleware [kiorky]
 
 0.12 (2010-01-01)
 -----------------
