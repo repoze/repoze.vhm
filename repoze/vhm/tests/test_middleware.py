@@ -13,6 +13,7 @@
 ##############################################################################
 
 import unittest
+from repoze.vhm.middleware import asbool
 _marker = []
 
 class Test_munge(unittest.TestCase):
@@ -28,6 +29,43 @@ class Test_munge(unittest.TestCase):
                 return munge(environ, host_header, root_header)
             else:
                 return munge(environ, host_header)
+
+    def test___call___no_host_header_root_header_present(self):
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+        expected = environ.copy()
+        expected['repoze.vhm.virtual_root'] =  '/d/e'
+        expected['repoze.vhm.virtual_url'] = 'http://f/g/c'
+        expected['repoze.vhm.virtual_host_base'] = 'f:80'
+        expected['HTTP_HOST'] = 'f:80'
+        expected['SERVER_PORT'] = '80'
+        expected['SERVER_NAME'] = 'f'
+        expected['SCRIPT_NAME'] = '/g'
+        self._callFUT(environ, host_header='http://f/g', root_header='/d/e')
+        self.assertEqual(environ, expected) 
+
+    def test___call___no_host_header_not_root_header_present(self):
+        REAL_PATH = '/a/b/c/'
+        environ = {'wsgi.url_scheme': 'http',
+                   'SERVER_NAME': 'example.com',
+                   'SERVER_PORT': '8888',
+                   'SCRIPT_NAME': '/',
+                   'PATH_INFO': REAL_PATH,
+                  }
+        expected = environ.copy()
+        expected['repoze.vhm.virtual_url'] = 'http://f/g/a/b/c'
+        expected['repoze.vhm.virtual_host_base'] = 'f:80'
+        expected['HTTP_HOST'] = 'f:80'
+        expected['SERVER_PORT'] = '80'
+        expected['SERVER_NAME'] = 'f'
+        expected['SCRIPT_NAME'] = '/g'
+        self._callFUT(environ, host_header='http://f/g')
+        self.assertEqual(environ, expected)  
 
     def test___call___no_host_header_no_root_header_unchanged(self):
         REAL_PATH = '/a/b/c/'
@@ -553,8 +591,24 @@ class TestVHMPathFilter(unittest.TestCase):
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
                          'example.com:80')
 
-def noopStartResponse(status, headers):
+def noopStartResponse(status, headers): #PRAGMA: no cover
     pass
+
+class testAsBool(unittest.TestCase):
+
+    def test__asbool_True(self):
+        for obj in ['true', 'yes', 'on', 'y', 't', '1']:
+            self.assertEqual(asbool(obj), True)
+    
+    def test__asbool_False(self):
+        for obj in ['false', 'no', 'off', 'n', 'f', '0']:
+            self.assertEqual(asbool(obj), False) 
+
+    def test__asbool_Fail(self):
+        self.assertRaises(ValueError, asbool, 'foo')
+
+    def test__noop(self):
+        self.assertTrue(asbool({1:2}))
 
 class VHMTestApp:
     def __init__(self, _called_environ):

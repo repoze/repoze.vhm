@@ -1,6 +1,8 @@
 repoze.vhm README
 =================
 
+.. contents::
+
 Overview
 --------
 
@@ -129,6 +131,7 @@ You can set the ``conserve_path_infos`` parameter if you want only the host and 
   use = egg:repoze.vhm#vhm_path
   conserve_path_infos = true
 
+This trick can be useful to forward the url AS-IS to an underlying equipment wiwhtout touching to the URI. Eg, a wsgi pipeline where our repoze.vhm filters some content from a stock zope2 server which do the VHM stuff also on its own.
 
 repoze.vhm Virtual Hosting Model
 --------------------------------

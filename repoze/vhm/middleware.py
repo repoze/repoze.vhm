@@ -27,9 +27,9 @@ def asbool(obj):
         elif obj in ['false', 'no', 'off', 'n', 'f', '0']:
             return False
         else:
-            raise ValueError(
-                "String is not true/false: %r" % obj)
-    return bool(obj)
+            raise ValueError("String is not true/false: %r" % obj)
+    obj = bool(obj) 
+    return obj
 
 def munge(environ, host_header=None, root_header=None):
     """Update the environment based on a host header and/or a VHM root.
