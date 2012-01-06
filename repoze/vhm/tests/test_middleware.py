@@ -470,7 +470,7 @@ class TestVHMPathFilter(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
-        self.assertEqual(expected['HTTP_HOST'], 'example.com')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com:8000')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '8000')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')

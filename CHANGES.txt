@@ -4,6 +4,10 @@ repoze.vhm Changelog
 0.14 (unreleased)
 -----------------
 
+- Ensure HTTP_HOST is set correctly for non-standard ports under VHM paths.
+  This header requires a trailing port if not the default for a given service.
+  See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23.
+  [davidjb]
 - Check that HTTP_HOST is correct for VHM path filter.
   [davidjb]
 
