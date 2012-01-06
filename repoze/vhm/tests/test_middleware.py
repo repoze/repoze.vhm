@@ -387,6 +387,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected.get('wsgi.url_scheme'), 'http')
+        self.assertNotIn('HTTP_HOST', expected)
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '8888')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
