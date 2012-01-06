@@ -413,6 +413,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -441,6 +442,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -467,6 +469,7 @@ class TestVHMPathFilter(unittest.TestCase):
 
         filter(environ, noopStartResponse)
 
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '8000')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -495,6 +498,7 @@ class TestVHMPathFilter(unittest.TestCase):
 
         self.assertEqual(expected['wsgi.url_scheme'], 'https')
         self.assertEqual(expected['repoze.vhm.virtual_root'], '/')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '443')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -524,6 +528,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')        
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
@@ -553,6 +558,7 @@ class TestVHMPathFilter(unittest.TestCase):
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
         self.assertEqual(expected['repoze.vhm.virtual_root'], '/sub1')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/script')
@@ -581,6 +587,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
