@@ -13,7 +13,6 @@
 ##############################################################################
 
 import unittest
-from repoze.vhm.middleware import asbool
 _marker = []
 
 class Test_munge(unittest.TestCase):
@@ -597,17 +596,21 @@ def noopStartResponse(status, headers): #PRAGMA: no cover
 class testAsBool(unittest.TestCase):
 
     def test__asbool_True(self):
+        from repoze.vhm.middleware import asbool
         for obj in ['true', 'yes', 'on', 'y', 't', '1']:
             self.assertEqual(asbool(obj), True)
     
     def test__asbool_False(self):
+        from repoze.vhm.middleware import asbool
         for obj in ['false', 'no', 'off', 'n', 'f', '0']:
             self.assertEqual(asbool(obj), False) 
 
     def test__asbool_Fail(self):
+        from repoze.vhm.middleware import asbool
         self.assertRaises(ValueError, asbool, 'foo')
 
     def test__noop(self):
+        from repoze.vhm.middleware import asbool
         self.assertTrue(asbool({1:2}))
 
 class VHMTestApp:
