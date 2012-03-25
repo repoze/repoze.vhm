@@ -46,7 +46,7 @@ class Test_munge(unittest.TestCase):
         expected['SERVER_NAME'] = 'f'
         expected['SCRIPT_NAME'] = '/g'
         self._callFUT(environ, host_header='http://f/g', root_header='/d/e')
-        self.assertEqual(environ, expected) 
+        self.assertEqual(environ, expected)
 
     def test___call___no_host_header_not_root_header_present(self):
         REAL_PATH = '/a/b/c/'
@@ -64,7 +64,7 @@ class Test_munge(unittest.TestCase):
         expected['SERVER_NAME'] = 'f'
         expected['SCRIPT_NAME'] = '/g'
         self._callFUT(environ, host_header='http://f/g')
-        self.assertEqual(environ, expected)  
+        self.assertEqual(environ, expected)
 
     def test___call___no_host_header_no_root_header_unchanged(self):
         REAL_PATH = '/a/b/c/'
@@ -264,10 +264,10 @@ class TestXHeaders(MungeReplacer, unittest.TestCase):
 
         self.assertEqual(_munged['host_header'], X_VHM_HOST)
         self.assertEqual(_munged['root_header'], X_VHM_ROOT)
-        
+
     def test___call___X_VHM_HOST_and_X_VHM_ROOT_correctly_sets_PATH_INFO(self):
         """
-        When getting a request at ``http://example.com:80/c/d/e/f``, the 
+        When getting a request at ``http://example.com:80/c/d/e/f``, the
         PATH_INFO needs to be set to account for the actual zope root
         """
         _munged = self._get_munged()
@@ -284,7 +284,7 @@ class TestXHeaders(MungeReplacer, unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(environ['PATH_INFO'], '/a/b/c/d/e/f')
-        
+
     def test___call___X_VHM_HOST_only_does_not_set_PATH_INFO(self):
         _munged = self._get_munged()
         expected = {}
@@ -298,7 +298,7 @@ class TestXHeaders(MungeReplacer, unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(environ['PATH_INFO'], '/a/b/c')
-        
+
 
 class TestExplicit(MungeReplacer, unittest.TestCase):
 
@@ -528,7 +528,7 @@ class TestVHMPathFilter(unittest.TestCase):
         filter(environ, noopStartResponse)
 
         self.assertEqual(expected['wsgi.url_scheme'], 'http')
-        self.assertEqual(expected['HTTP_HOST'], 'example.com')        
+        self.assertEqual(expected['HTTP_HOST'], 'example.com')
         self.assertEqual(expected['SERVER_NAME'], 'example.com')
         self.assertEqual(expected['SERVER_PORT'], '80')
         self.assertEqual(expected['SCRIPT_NAME'], '/sub1/sub2')
@@ -538,8 +538,8 @@ class TestVHMPathFilter(unittest.TestCase):
                                   'http://example.com/sub1/sub2/a/b/c')
         self.assertEqual(expected.get('repoze.vhm.virtual_root'), '/')
         self.assertEqual(expected['repoze.vhm.virtual_host_base'],
-                         'example.com:80')  
- 
+                         'example.com:80')
+
     def test___call___VirtualHostRoot_w_subpath(self):
         # Tokens after VHB + 2, before VHR -> vroot
         expected = {}
@@ -607,11 +607,11 @@ class testAsBool(unittest.TestCase):
         from repoze.vhm.middleware import asbool
         for obj in ['true', 'yes', 'on', 'y', 't', '1']:
             self.assertEqual(asbool(obj), True)
-    
+
     def test__asbool_False(self):
         from repoze.vhm.middleware import asbool
         for obj in ['false', 'no', 'off', 'n', 'f', '0']:
-            self.assertEqual(asbool(obj), False) 
+            self.assertEqual(asbool(obj), False)
 
     def test__asbool_Fail(self):
         from repoze.vhm.middleware import asbool
