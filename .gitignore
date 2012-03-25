@@ -1,0 +1,12 @@
+env*/
+*.egg
+*.egg-info
+*.pyc
+*$py.class
+.coverage
+dist/
+*~
+.tox/
+nosetests.xml
+coverage.xml
+repoze/lru/coverage.xml
