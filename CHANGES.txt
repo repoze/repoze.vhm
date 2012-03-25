@@ -1,7 +1,7 @@
 repoze.vhm Changelog
 ====================
 
-0.14 (unreleased)
+0.14 (2012-03-24)
 -----------------
 
 - Ensure HTTP_HOST is set correctly for non-standard ports under VHM paths.
