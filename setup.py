@@ -20,7 +20,6 @@ setup(name='repoze.vhm',
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Internet :: WWW/HTTP :: WSGI",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
-        "Framework :: Zope3",
         ],
       keywords='web application server wsgi zope repoze',
       author="Agendaless Consulting",
@@ -39,4 +38,4 @@ setup(name='repoze.vhm',
       vhm_explicit = repoze.vhm.middleware:make_explicit_filter
       vhm_path = repoze.vhm.middleware:make_path_filter
       """,
-      )
+)
