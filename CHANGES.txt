@@ -4,7 +4,7 @@ repoze.vhm Changelog
 0.15 (unrelease)
 ----------------
 
-- no changes yet
+- support Python 3
 
 0.14 (2012-03-24)
 -----------------
