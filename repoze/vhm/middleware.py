@@ -12,7 +12,8 @@
 #
 ##############################################################################
 
-from urlparse import urlsplit
+from six.moves.urllib.parse import urlsplit
+from six import text_type, string_types
 
 from repoze.vhm.constants import DEFAULT_PORTS
 from repoze.vhm.utils import getServerURL
@@ -20,7 +21,7 @@ from repoze.vhm.utils import getServerURL
 
 # stolen from Paste not to add an explicit dependency
 def asbool(obj):
-    if isinstance(obj, (str, unicode)):
+    if isinstance(obj, (string_types, text_type)):
         obj = obj.strip().lower()
         if obj in ['true', 'yes', 'on', 'y', 't', '1']:
             return True
