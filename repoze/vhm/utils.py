@@ -12,7 +12,7 @@
 #
 ##############################################################################
 
-from urlparse import urlunsplit
+from six.moves.urllib.parse import urlunsplit
 from repoze.vhm.constants import DEFAULT_PORTS
 
 def setServerURL(environ):
