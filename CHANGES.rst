@@ -1,10 +1,10 @@
 repoze.vhm Changelog
 ====================
 
-0.15 (unrelease)
-----------------
+0.15 (unreleased)
+-----------------
 
-- support Python 3
+- Add support fo Python 3.4, 3.5, and 3.6.
 
 0.14 (2012-03-24)
 -----------------
@@ -15,7 +15,8 @@ repoze.vhm Changelog
   [davidjb]
 
 0.13 (2010-04-18)
------------------ 
+-----------------
+
 - add conserve_path_infos for the VHMPathFilter middleware [kiorky]
 
 0.12 (2010-01-01)
