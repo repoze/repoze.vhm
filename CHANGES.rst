@@ -4,6 +4,8 @@ repoze.vhm Changelog
 0.15 (unreleased)
 -----------------
 
+- Drop support for Python 2.6.
+
 - Add support fo Python 3.4, 3.5, and 3.6.
 
 0.14 (2012-03-24)
