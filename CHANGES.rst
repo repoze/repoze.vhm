@@ -4,6 +4,8 @@ repoze.vhm Changelog
 0.15 (unreleased)
 -----------------
 
+- Add support for testing on Travis.
+
 - Drop support for Python 2.6.
 
 - Add support fo Python 3.4, 3.5, and 3.6.
