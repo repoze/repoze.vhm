@@ -20,7 +20,7 @@ setup(name='repoze.vhm',
       description='repoze virtual hosting middleware.',
       long_description=README + CHANGES,
       classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
