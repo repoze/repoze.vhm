@@ -1,6 +1,12 @@
 repoze.vhm Changelog
 ====================
 
+0.16 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
 0.15 (2020-06-19)
 -----------------
 
