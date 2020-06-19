@@ -14,7 +14,7 @@ CHANGES = _read_file('CHANGES.rst')
 testing_extras = ['nose', 'coverage']
 
 setup(name='repoze.vhm',
-      version='0.15.dev.0',
+      version='0.15',
       description='repoze virtual hosting middleware.',
       long_description=README + CHANGES,
       classifiers=[
