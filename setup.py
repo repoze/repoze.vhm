@@ -1,5 +1,3 @@
-__version__ = '0.15.dev.0'
-
 import os
 from setuptools import setup, find_packages
 
@@ -16,7 +14,7 @@ CHANGES = _read_file('CHANGES.rst')
 testing_extras = ['nose', 'coverage']
 
 setup(name='repoze.vhm',
-      version=__version__,
+      version='0.15.dev.0',
       description='repoze virtual hosting middleware.',
       long_description=README + CHANGES,
       classifiers=[
