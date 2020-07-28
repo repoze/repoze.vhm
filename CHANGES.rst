@@ -1,7 +1,13 @@
 repoze.vhm Changelog
 ====================
 
-0.15 (unreleased)
+0.16 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
+0.15 (2020-06-19)
 -----------------
 
 - Add support for testing on Travis.
