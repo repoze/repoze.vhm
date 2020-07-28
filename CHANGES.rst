@@ -4,7 +4,9 @@ repoze.vhm Changelog
 0.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Add support for Python 3.7 and 3.8.
+
+- Drop support for Python 3.3 and 3.4.
 
 
 0.15 (2020-06-19)
